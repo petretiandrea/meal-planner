@@ -1,5 +1,6 @@
 package io.github.petretiandrea.mealplanner
 
+import io.github.petretiandrea.mealplanner.domain.Macro
 import io.github.petretiandrea.mealplanner.genetic.GeneticMealPlanner
 import java.io.File
 
@@ -14,9 +15,7 @@ fun main() {
 
     val mealPlanner = GeneticMealPlanner(foods)
 
-    val meals = mealPlanner.generatePlan(
-        40.0, 15.0, 10.0
-    )
+    val meals = mealPlanner.generatePlan(Macro(40.0, 15.0, 10.0))
 
     meals.forEach { meal ->
         println("-------- PLAN -------")

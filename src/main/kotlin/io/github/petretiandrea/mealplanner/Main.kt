@@ -2,6 +2,7 @@ package io.github.petretiandrea.mealplanner
 
 import io.github.petretiandrea.mealplanner.domain.Macro
 import io.github.petretiandrea.mealplanner.genetic.GeneticMealPlanner
+import io.github.petretiandrea.mealplanner.linear.LinearMealPlanner
 import java.io.File
 
 fun main() {
@@ -13,11 +14,12 @@ fun main() {
 
     foods.forEach { println(it.ofGrams(50.0)) }
 
-    val mealPlanner = GeneticMealPlanner(foods)
+    //val mealPlanner = GeneticMealPlanner(foods)
+    val mealPlanner = LinearMealPlanner(foods)
 
     val meals = mealPlanner.generatePlan(Macro(40.0, 15.0, 10.0))
 
-    meals.forEach { meal ->
+    meals.limit(4).forEach { meal ->
         println("-------- PLAN -------")
         println("FAT: ${meal.fats} g, CARBS: ${meal.carbs} g PRO: ${meal.proteins} g, ${meal.foods.sumOf { it.kCal }} kCal")
         meal.foods.forEach {

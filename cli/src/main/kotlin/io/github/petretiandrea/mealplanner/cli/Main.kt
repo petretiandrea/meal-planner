@@ -3,7 +3,7 @@ package io.github.petretiandrea.mealplanner.cli
 import io.github.petretiandrea.mealplanner.cli.Constants.DEFAULT_FOOD_FILE
 import io.github.petretiandrea.mealplanner.cli.Constants.DEFAULT_PROPOSED_PLANS
 import io.github.petretiandrea.mealplanner.domain.Macro
-import io.github.petretiandrea.mealplanner.domain.impl.CsvFoodRepository
+import io.github.petretiandrea.mealplanner.cli.impl.CsvFoodRepository
 import io.github.petretiandrea.mealplanner.domain.impl.genetic.GeneticMealPlanner
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType

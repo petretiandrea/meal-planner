@@ -1,5 +1,7 @@
 plugins {
+    application
     kotlin("jvm") version "1.8.0"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 group = "org.example"
@@ -28,4 +30,12 @@ tasks.test {
 
 kotlin {
     //jvmToolchain(8)
+}
+
+application {
+    mainClass.set("io.github.petretiandrea.mealplanner.MainKt")
+}
+
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    archiveFileName.set("meal-planner.jar")
 }

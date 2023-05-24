@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
     implementation("io.jenetics:jenetics:7.1.3")
 
     // https://mvnrepository.com/artifact/io.jenetics/jenetics.ext

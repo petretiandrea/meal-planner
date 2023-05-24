@@ -16,17 +16,11 @@ data class Food(
     val kCal: Double
         get() = carbs * KCAL_CARB_PER_GRAM + fats * KCAL_FAT_PER_GRAM + proteins * KCAL_PROTEIN_PER_GRAM;
 
-    fun ofGrams(grams: Double): Food {
-        val carbsRatio = carbs / this.grams
-        val fatsRatio = fats / this.grams
-        val proteinsRatio = proteins / this.grams
-
-        return Food(
-            name,
-            grams * carbsRatio,
-            grams * fatsRatio,
-            grams * proteinsRatio,
-            grams
-        )
-    }
+    fun withWeight(grams: Double): Food = Food(
+        name,
+        grams * (carbs / this.grams),
+        grams * (fats / this.grams),
+        grams * (proteins / this.grams),
+        grams
+    )
 }

@@ -13,13 +13,12 @@ class MealPlan(
     val proteins: Double
         get() = foods.sumOf { it.proteins }
 
-    fun addFood(food: Food): MealPlan {
-        return MealPlan(foods + food);
-    }
+    val totalCalories: Double
+        get() = foods.sumOf { it.kCal }
 
-    fun removeFood(food: Food): MealPlan {
-        return MealPlan(foods - food);
-    }
+    operator fun plus(food: Food): MealPlan = MealPlan(foods + food)
+
+    operator fun minus(food: Food): MealPlan = MealPlan(foods - food)
 
     override fun toString(): String {
         return "MealPlan(foods=$foods, carbs=$carbs, fats=$fats, proteins=$proteins)"

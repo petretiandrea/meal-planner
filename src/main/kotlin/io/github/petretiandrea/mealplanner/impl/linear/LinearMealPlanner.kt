@@ -1,10 +1,9 @@
-package io.github.petretiandrea.mealplanner.linear
+package io.github.petretiandrea.mealplanner.impl.linear
 
 import io.github.petretiandrea.mealplanner.domain.*
 import org.apache.commons.math3.optim.MaxIter
 import org.apache.commons.math3.optim.linear.*
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType
-import java.util.stream.DoubleStream
 import java.util.stream.IntStream
 import java.util.stream.Stream
 
@@ -14,7 +13,7 @@ class LinearMealPlanner(
 ) : MealPlanner {
 
 
-    override fun generatePlan(targetMacro: Macro): Stream<MealPlan> {
+    override fun generatePlans(targetMacro: Macro): Stream<MealPlan> {
         val proteins = foods.map { it.proteins }.toDoubleArray()
         val fats = foods.map { it.fats }.toDoubleArray()
         val carbs = foods.map { it.carbs }.toDoubleArray()

@@ -20,6 +20,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
-        body: |
-          Release meal planner
-        files: build/libs/meal-planner.jar
+        with:
+          body: |
+            Release meal planner
+          files: build/libs/meal-planner.jar

@@ -1,4 +1,4 @@
-package io.github.petretiandrea.mealplanner
+package io.github.petretiandrea.mealplanner.cli
 
 import io.github.petretiandrea.mealplanner.domain.MealPlan
 import java.util.*

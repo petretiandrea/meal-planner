@@ -1,4 +1,4 @@
-package io.github.petretiandrea.mealplanner.impl.linear
+package io.github.petretiandrea.mealplanner.domain.impl.linear
 
 import io.github.petretiandrea.mealplanner.domain.*
 import org.apache.commons.math3.optim.MaxIter

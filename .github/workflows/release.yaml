@@ -18,11 +18,11 @@ jobs:
           distribution: 'corretto' # See 'Supported distributions' for available options
           java-version: '17'
       - name: Build fat jar
-        run: ./gradlew :shadowJar
+        run: ./gradlew :cli:shadowJar
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           body: |
             Release meal planner
-          files: build/libs/meal-planner.jar
+          files: cli/build/libs/meal-planner.jar

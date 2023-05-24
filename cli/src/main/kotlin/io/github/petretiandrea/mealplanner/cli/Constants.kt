@@ -1,4 +1,4 @@
-package io.github.petretiandrea.mealplanner
+package io.github.petretiandrea.mealplanner.cli
 
 object Constants {
     const val APP_NAME = "meal-planner"

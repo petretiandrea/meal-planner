@@ -1,4 +1,4 @@
-package io.github.petretiandrea.mealplanner.impl
+package io.github.petretiandrea.mealplanner.domain.impl
 
 import io.github.petretiandrea.mealplanner.domain.Food
 import io.github.petretiandrea.mealplanner.domain.FoodRepository

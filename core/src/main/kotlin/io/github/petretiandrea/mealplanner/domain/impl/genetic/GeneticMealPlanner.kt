@@ -1,4 +1,4 @@
-package io.github.petretiandrea.mealplanner.impl.genetic
+package io.github.petretiandrea.mealplanner.domain.impl.genetic
 
 import io.github.petretiandrea.mealplanner.domain.Food
 import io.github.petretiandrea.mealplanner.domain.Macro

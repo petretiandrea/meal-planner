@@ -1,5 +1,8 @@
+import java.net.URI
+
 plugins {
     kotlin("jvm")
+    id("maven-publish")
 }
 
 repositories {
@@ -24,4 +27,25 @@ tasks.test {
 
 kotlin {
     //jvmToolchain(8)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "it.github.petretiandrea.mealplanner"
+            artifactId = "meal-planner-core"
+            version = "1.0.0"
+            from(components["java"])
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = URI("https://maven.pkg.github.com/octocat/hello-world")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }

@@ -5,6 +5,8 @@ plugins {
     id("maven-publish")
 }
 
+java.sourceCompatibility = JavaVersion.VERSION_17
+
 repositories {
     mavenCentral()
 }

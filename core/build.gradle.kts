@@ -20,6 +20,10 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-math3
     implementation("org.apache.commons:commons-math3:3.6.1")
 
+    // https://mvnrepository.com/artifact/com.google.ortools/ortools-java
+    implementation("com.google.ortools:ortools-java:9.6.2534")
+
+
     testImplementation(kotlin("test"))
 }
 

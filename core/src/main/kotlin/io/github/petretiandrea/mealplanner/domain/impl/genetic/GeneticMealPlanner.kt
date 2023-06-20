@@ -1,10 +1,10 @@
 package io.github.petretiandrea.mealplanner.domain.impl.genetic
 
-import io.github.petretiandrea.mealplanner.domain.Food
-import io.github.petretiandrea.mealplanner.domain.Macro
-import io.github.petretiandrea.mealplanner.domain.MealPlan
-import io.github.petretiandrea.mealplanner.domain.MealPlanner
-import io.jenetics.*
+import io.github.petretiandrea.mealplanner.domain.*
+import io.jenetics.Genotype
+import io.jenetics.IntegerChromosome
+import io.jenetics.IntegerGene
+import io.jenetics.Optimize
 import io.jenetics.engine.Engine
 import io.jenetics.engine.EvolutionResult
 import io.jenetics.engine.EvolutionStatistics
@@ -15,10 +15,7 @@ import java.util.logging.Logger
 import java.util.stream.IntStream
 import java.util.stream.Stream
 
-
-class GeneticMealPlanner(
-    private val databaseFoods: List<Food>
-) : MealPlanner {
+class GeneticMealPlanner : MealPlanner {
 
     companion object {
         private val logger = Logger.getLogger(GeneticMealPlanner::class.java.name)
@@ -30,13 +27,15 @@ class GeneticMealPlanner(
 
     private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
 
-    override fun generatePlans(targetMacro: Macro): Stream<MealPlan> {
+    override fun generatePlans(dataset: FoodDataset, targetMacro: Macro): Stream<MealPlan> {
         val statistics = EvolutionStatistics.ofNumber<Double>()
         val factoryGenotype = Genotype.of(
-            IntegerChromosome.of(0, MAX_FOOD_GRAMS, databaseFoods.size),
+            IntegerChromosome.of(0, MAX_FOOD_GRAMS, dataset.size)
         )
+        val constraint = FoodConstraint(dataset, IntRange(0, MAX_FOOD_GRAMS))
 
-        val engine = Engine.builder({ eval(it, targetMacro) }, factoryGenotype)
+        val engine = Engine.builder({ eval(dataset, it, targetMacro) }, constraint.constrain(factoryGenotype))
+            .constraint(constraint)
             .populationSize(POPULATION_SIZE)
             .maximizing()
             .executor(executor)
@@ -52,19 +51,19 @@ class GeneticMealPlanner(
 
         return results.population().stream()
             .sorted(Optimize.MAXIMUM.descending())
-            .map { MealPlan(foodsFromGenotype(it.genotype()).toList().toSet()) }
+            .map { MealPlan(foodsFromGenotype(dataset, it.genotype()).toList().toSet()) }
     }
 
-    private fun eval(genotype: Genotype<IntegerGene>, targetMacro: Macro): Double =
-        foodsFromGenotype(genotype)
+    private fun eval(dataset: FoodDataset, genotype: Genotype<IntegerGene>, targetMacro: Macro): Double =
+        foodsFromGenotype(dataset, genotype)
             .collect(Macro.foodCollector())
             .similarity(targetMacro)
 
 
-    private fun foodsFromGenotype(genotype: Genotype<IntegerGene>): Stream<Food> {
+    private fun foodsFromGenotype(dataset: FoodDataset, genotype: Genotype<IntegerGene>): Stream<Food> {
         val chromosome = genotype.chromosome()
         return IntStream.range(0, chromosome.length())
-            .mapToObj { databaseFoods[it] to chromosome.get(it) }
+            .mapToObj { dataset[it]!! to chromosome.get(it) }
             .map { it.first.withWeight(it.second.doubleValue()) }
     }
 }

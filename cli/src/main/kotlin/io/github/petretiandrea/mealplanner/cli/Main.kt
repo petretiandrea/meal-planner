@@ -32,11 +32,13 @@ fun main(args: Array<String>) {
 
     updateLogLevel(if (debug) Level.FINE else Level.INFO)
 
-    val foodRepository = CsvFoodRepository(File(foodFile))
+    val foodDataset = CsvFoodRepository(File(foodFile))
+    val targetMacros = Macro(targetCarbs, targetProteins, targetFats)
 
-    val mealPlanner = GeneticMealPlanner(foodRepository.getAll())
-    val meals = mealPlanner.generatePlans(Macro(targetCarbs, targetProteins, targetFats))
+    val mealPlanner = GeneticMealPlanner()
+    val meals = mealPlanner.generatePlans(foodDataset, targetMacros)
 
+    println("Target Macro $targetMacros")
     meals.limit(plans.toLong()).forEach { plan ->
         MealPlanPrinter.printPlan(plan)
         println("---------------------------------")

@@ -33,6 +33,12 @@ const val KCAL_CARB_PER_GRAM = 4
 const val KCAL_FAT_PER_GRAM = 9
 ```
 
+### Food Constraints
+You can use csv file to define a food constraint such as fixed weight for a specific food item. Actually the following constraints are supported:
+- FIXED WEIGHT: fix weights for multiple foods, for example you can fix bread to 60g (By default, there is a ±5 grams of toleration)
+- RANGE WEIGHT: Working In Progress
+
+
 ## Example
 Consider the following CSV saved as `simple-foods.csv` and these macro as target (Carbs: 40g, Proteins: 15g, Fat: 10g)
 ```csv
@@ -66,4 +72,13 @@ bread	74,00g (Carbs 37,00g Pro 5,18g Fats 2,22g 188,70kCal)
 arachids	16,00g (Carbs 1,76g Pro 4,16g Fats 8,32g 98,56kCal)
 mermalade	4,00g (Carbs 1,48g Pro 0,00g Fats 0,00g 5,92kCal)
 ---------------------------------
+```
+
+### Example for Fixed Weight
+The following CSV set weight for bread to 60g:
+```
+name;carbs;fats;protein;fixed_weight
+bread;50;3;7;60
+arachids;11;52;26
+mermalade;37;0;0
 ```

@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 
 interface MealPlanJobDispatcher {
     suspend fun dispatchJob(mealPlanJobRequest: MealPlanJobRequest): MealPlanJob?
+    suspend fun waitJobById(jobId: JobId): MealPlanJob?
     suspend fun getJobById(jobId: JobId): MealPlanJob?
 
     companion object {

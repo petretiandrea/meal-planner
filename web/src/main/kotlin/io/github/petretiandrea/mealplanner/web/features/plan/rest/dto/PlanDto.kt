@@ -1,4 +1,4 @@
-package io.github.petretiandrea.mealplanner.web.features.plan.rest
+package io.github.petretiandrea.mealplanner.web.features.plan.rest.dto
 
 import io.github.petretiandrea.mealplanner.web.features.foods.FoodResponseDto
 

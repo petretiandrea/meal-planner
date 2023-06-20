@@ -11,7 +11,6 @@ sealed interface MealPlanJob {
     companion object {
         fun computing(jobId: JobId) = MealPlanJobComputing(jobId)
         fun ready(jobId: JobId, plans: List<MealPlan>) = MealPlanJobReady(jobId, plans)
-
         fun error(jobId: JobId, error: String = "") = MealPlanJobError(jobId, error)
     }
 }

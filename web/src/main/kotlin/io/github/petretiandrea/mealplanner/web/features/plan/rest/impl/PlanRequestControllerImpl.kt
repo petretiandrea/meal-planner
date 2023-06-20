@@ -1,11 +1,14 @@
 package io.github.petretiandrea.mealplanner.web.features.plan.rest.impl
 
-import io.github.petretiandrea.mealplanner.domain.Food
-import io.github.petretiandrea.mealplanner.domain.Macro
-import io.github.petretiandrea.mealplanner.domain.MealPlan
+import io.github.petretiandrea.mealplanner.domain.*
 import io.github.petretiandrea.mealplanner.web.features.foods.FoodResponseDto
 import io.github.petretiandrea.mealplanner.web.features.plan.rest.*
 import io.github.petretiandrea.mealplanner.web.features.plan.domain.*
+import io.github.petretiandrea.mealplanner.web.features.plan.domain.FoodDataset
+import io.github.petretiandrea.mealplanner.web.features.plan.rest.dto.CreateMealPlan
+import io.github.petretiandrea.mealplanner.web.features.plan.rest.dto.MealPlanResponse
+import io.github.petretiandrea.mealplanner.web.features.plan.rest.dto.PlanDto
+import io.github.petretiandrea.mealplanner.web.features.plan.rest.dto.StatusPlan
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -15,7 +18,7 @@ class PlanRequestControllerImpl(
     private val mealPlanJobDispatcher: MealPlanJobDispatcher,
 ) : PlanRequestRestController {
 
-    override suspend fun createPlanRequest(request: CreateMealPlanRequest): ResponseEntity<String> {
+    override suspend fun createPlanRequest(request: CreateMealPlan): ResponseEntity<String> {
         val jobRequest = MealPlanJobRequest(
             Macro(request.targetCarbs, request.targetProteins, request.targetFats),
             request.numberOfPlans,
@@ -26,34 +29,51 @@ class PlanRequestControllerImpl(
             ?: ResponseEntity.internalServerError().build()
     }
 
-    override suspend fun getPlanRequest(requestId: String): ResponseEntity<MealPlanRequestResponse> {
-        return mealPlanJobDispatcher.getJobById(JobId.fromString(requestId))?.let {
-            when (it) {
-                is MealPlanJobComputing -> MealPlanRequestResponse(requestId, StatusPlan.COMPUTING)
-                is MealPlanJobReady -> MealPlanRequestResponse(
-                    requestId,
-                    StatusPlan.READY,
-                    mapPlansToDtos(it.plans)
-                )
-
-                is MealPlanJobError -> MealPlanRequestResponse(requestId, StatusPlan.ERROR, error = it.error)
-            }
-        }?.let { ResponseEntity.ok(it) } ?: ResponseEntity.notFound().build()
+    override suspend fun getPlanRequest(requestId: String): ResponseEntity<MealPlanResponse> {
+        return mealPlanJobDispatcher.getJobById(JobId.fromString(requestId))
+            ?.let { mealJobToResponse(it) }
+            ?.let { ResponseEntity.ok(it) } ?: ResponseEntity.notFound().build()
     }
 
-    private fun createFoodDataset(request: CreateMealPlanRequest): FoodDataset = when {
+    override suspend fun createPlanSync(request: CreateMealPlan): ResponseEntity<MealPlanResponse> {
+        val jobRequest = MealPlanJobRequest(
+            Macro(request.targetCarbs, request.targetProteins, request.targetFats),
+            request.numberOfPlans,
+            createFoodDataset(request)
+        )
+
+        return mealPlanJobDispatcher.dispatchJob(jobRequest)
+            ?.let { mealPlanJobDispatcher.waitJobById(it.jobId) }
+            ?.let { ResponseEntity.ok(mealJobToResponse(it)) }
+            ?: ResponseEntity.notFound().build()
+    }
+
+    private fun mealJobToResponse(mealJob: MealPlanJob) = when (mealJob) {
+        is MealPlanJobComputing -> MealPlanResponse(mealJob.jobId.toString(), StatusPlan.COMPUTING)
+        is MealPlanJobReady -> MealPlanResponse(
+            mealJob.jobId.toString(),
+            StatusPlan.READY,
+            mapPlansToDtos(mealJob.plans)
+        )
+
+        is MealPlanJobError -> MealPlanResponse(mealJob.jobId.toString(), StatusPlan.ERROR, error = mealJob.error)
+    }
+
+    private fun createFoodDataset(request: CreateMealPlan): FoodDataset = when {
         request.foods.isNotEmpty() -> FoodDataset.raw(
             request.foods.map {
-                Food(
-                    it.name,
-                    it.carbs,
-                    it.fats,
-                    it.proteins,
-                    100.0
+                FoodWithConstraint(
+                    Food(
+                        it.name,
+                        it.carbs,
+                        it.fats,
+                        it.proteins,
+                        100.0
+                    ),
+                    it.constraint?.let { constraint -> FixedWeight(constraint.grams) }
                 )
             })
 
-        request.foodIds.isNotEmpty() -> FoodDataset.lazy(request.foodIds)
         else -> FoodDataset.raw(emptyList())
     }
 

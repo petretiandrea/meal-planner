@@ -82,3 +82,7 @@ bread;50;3;7;60
 arachids;11;52;26
 mermalade;37;0;0
 ```
+
+## Running Web Service
+The web service is written using spring boot due to the possibility to integrate immediately with meal planner core.
+TODO: complete guide

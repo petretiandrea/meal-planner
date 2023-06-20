@@ -1,0 +1,185 @@
+openapi: 3.0.0
+info:
+  title: Meal Planner
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /request/:
+    post:
+      tags:
+        - Async
+      summary: Create Meal Plan
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlanRequest"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: string
+                format: UUID
+                description: RequestID
+  /request/plan:
+    post:
+      tags:
+        - Synchronous
+      summary: Create Meal Plan Sync
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlanRequest"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlanResponse"
+  /request/{requestId}:
+    get:
+      tags:
+        - Async
+      summary: Get Plan
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          schema:
+            type: string
+            format: UUID
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlanResponse"
+
+components:
+  schemas:
+    PlanRequest:
+      type: object
+      properties:
+        numberOfPlans:
+          type: integer
+          description: "Number of plan to generate"
+          example: 4
+        targetCarbs:
+          type: number
+          description: "Target carbs"
+          example: 50
+        targetProteins:
+          type: number
+          description: "Target proteins"
+          example: 10
+        targetFats:
+          type: number
+          description: "Target fats"
+          example: 15
+        foods:
+          type: array
+          items:
+            $ref: "#/components/schemas/FoodItem"
+
+    FoodItem:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Name of food"
+          example: "Bread"
+        carbs:
+          type: number
+          description: "Carbs of food by 100g"
+          example: 50
+        fats:
+          type: number
+          description: "Fats of food by 100g"
+          example: 3
+        proteins:
+          type: number
+          description: "Proteins of food by 100g"
+          example: 7
+        constraint:
+          oneOf:
+            - $ref: "#/components/schemas/FixedConstraint"
+
+
+    FixedConstraint:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: ["fixed"]
+          description: "Type of constraint"
+        grams:
+          type: number
+          description: "Fixed grams constraitns"
+          example: 60
+
+    PlanResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: UUID
+          description: "The ID of plan request"
+        status:
+          type: string
+          enum: ["READY","COMPUTING"]
+          description: "The status of plan request"
+        plans:
+          type: array
+          items:
+            $ref: "#/components/schemas/FoodPlan"
+
+    FoodPlan:
+      type: object
+      properties:
+        foods:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: "Food name"
+                example: "Bread"
+              carbs:
+                type: number
+                description: "Carbs of food"
+                example: 50
+              fats:
+                type: number
+                description: "Fats of food"
+                example: 3
+              proteins:
+                type: number
+                description: "Proteins of food"
+                example: 7
+              weight:
+                type: number
+                description: "Weight of food"
+                example: 60.0
+        carbs:
+          type: number
+          description: "Total carbs of plan"
+          example: 50
+        proteins:
+          type: number
+          description: "Total proteins of plan"
+          example: 10.4
+        fats:
+          type: number
+          description: "Total fats of plan"
+          example: 14.2
+        kcal:
+          type: number
+          description: "Total k calories of plan"
+          example: 370

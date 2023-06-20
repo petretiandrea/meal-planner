@@ -15,7 +15,7 @@ sealed interface FoodConstraint {
 }
 data class FixedWeight(
     val grams: Double,
-    private val epsilon: Double = 1.0
+    private val epsilon: Double = 5.0
 ) : FoodConstraint {
     override fun isValid(food: Food) = isValidGrams(food.grams)
     override fun isValidGrams(grams: Double): Boolean =
@@ -24,7 +24,7 @@ data class FixedWeight(
 data class RangeWeight(
     val minGrams: Double,
     val maxGrams: Double,
-    private val epsilon: Double = 1.0
+    private val epsilon: Double = 5.0
 ): FoodConstraint {
     override fun isValid(food: Food) = isValidGrams(food.grams)
     override fun isValidGrams(grams: Double): Boolean =

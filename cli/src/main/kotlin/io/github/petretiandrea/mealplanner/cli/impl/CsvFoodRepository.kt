@@ -39,7 +39,7 @@ class CsvFoodRepository(
     private fun mapLineToFood(line: String): FoodWithConstraint? {
         val pieces = line.split(';', ignoreCase = true)
         if (pieces.size >= 4) {
-            val fixedWeight = if (pieces.size >= 5) FixedWeight(pieces[4].toDouble(), 0.1) else null
+            val fixedWeight = if (pieces.size >= 5) FixedWeight(pieces[4].toDouble()) else null
             val food = Food(
                 pieces[0],
                 pieces[1].toDouble(),
